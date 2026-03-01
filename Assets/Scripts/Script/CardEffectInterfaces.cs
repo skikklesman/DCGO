@@ -518,3 +518,10 @@ public interface IVortexCanAttackPlayersEffect
     bool VortexCanAttackPlayersPermanent(Permanent Attacker);
 }
 #endregion
+
+#region Collision
+public interface ICollisionEffect
+{
+    bool HasCollision(Permanent permanent);
+}
+#endregion

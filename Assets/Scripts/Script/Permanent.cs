@@ -2369,6 +2369,33 @@ public class Permanent
     {
         get
         {
+            #region if attacking digimon has collision
+            if (GManager.instance.attackProcess.ActiveAttack())
+            {
+                Permanent attackingPermanent = GManager.instance.attackProcess.AttackingPermanent;
+
+                if (attackingPermanent != null && attackingPermanent.TopCard.Owner != TopCard.Owner)
+                {
+                    foreach(ICardEffect cardEffect in attackingPermanent.EffectList(EffectTiming.OnAllyAttack))
+                    {
+                        if (cardEffect is ICollisionEffect)
+                        {
+                            if (cardEffect.CanTrigger(null))
+                            {
+                                if (((ICollisionEffect)cardEffect).HasCollision(attackingPermanent))
+                                {
+                                    if (!TopCard.CanNotBeAffected(cardEffect))
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            #endregion
+
             foreach (Player player in GManager.instance.turnStateMachine.gameContext.Players_ForTurnPlayer)
             {
                 #region Effects of permanents in play
@@ -2957,11 +2984,14 @@ public class Permanent
         {
             foreach (ICardEffect cardEffect in this.EffectList(EffectTiming.OnAllyAttack))
             {
-                if (cardEffect is ActivateICardEffect)
+                if (cardEffect is ICollisionEffect)
                 {
-                    if (cardEffect.EffectName == "Collision")
+                    if (cardEffect.CanTrigger(null))
                     {
-                        return true;
+                        if (((ICollisionEffect)cardEffect).HasCollision(this))
+                        {
+                            return true;
+                        }
                     }
                 }
             }
