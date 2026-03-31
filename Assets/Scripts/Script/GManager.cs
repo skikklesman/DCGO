@@ -545,7 +545,13 @@ public class GManager : MonoBehaviourPun
             photonView.RPC("AlterMemoryRPC", RpcTarget.Others, 1);
             StartCoroutine(AlterMemory(You, -1));
         }
-            
+
+        //Dump game state snapshot
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.G))
+        {
+            GameStateSerializer.CaptureAndWrite();
+        }
+
     }
 
     [PunRPC]
